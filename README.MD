@@ -1,4 +1,8 @@
-It is necessary to have a .env file with:
+To work this repo locally, you have to:
+- clone this repo
+- install dependencies with `npm i`
+
+Also, it is necessary to have a .env file with:
 - MONGO_URI
 - PORT
 
