@@ -16,7 +16,7 @@ const generateMockPets = (count, users = []) => {
       const randomUser = users[Math.floor(Math.random() * users.length)];
       pets.push(generateMockDog(randomUser._id));
     } else {
-      pets.push(generateMockDog()); // sin owner
+      pets.push(generateMockDog());
     }
   }
   return pets;

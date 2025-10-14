@@ -13,7 +13,7 @@ router.get("/mockingpets", (req, res) => {
 });
 
 router.get("/mockingusers", (req, res) => {
-  const users = generateMockUsers(50);
+  const users = generateMockUsers(10);
   res.status(200).json(users);
 });
 

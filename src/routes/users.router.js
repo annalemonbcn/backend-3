@@ -69,4 +69,13 @@ router.post("/", async (req, res) => {
   });
 });
 
+router.post("/batch", async (req, res) => {
+  const users = req.body;
+
+  const result = await UserModel.insertMany(users);
+  res
+    .status(201)
+    .json({ message: "Users created successfully", users: result });
+});
+
 export default router;

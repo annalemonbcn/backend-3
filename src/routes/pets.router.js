@@ -29,6 +29,13 @@ router.post("/", async (req, res) => {
   res.status(201).json({ message: "Pet created successfully", pet: result });
 });
 
+router.post("/batch", async (req, res) => {
+  const pets = req.body;
+
+  const result = await PetModel.insertMany(pets);
+  res.status(201).json({ message: "Pets created successfully", pets: result });
+});
+
 router.put("/:pid", async (req, res) => {
   const { pid } = req.params;
   const updatedData = req.body;
