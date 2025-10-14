@@ -9,6 +9,7 @@ import YAML from "yamljs";
 import mocksRouter from "./routes/mocks.router.js";
 import petsRouter from "./routes/pets.router.js";
 import usersRouter from "./routes/users.router.js";
+import adoptionsRouter from "./routes/adoptions.router.js";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/mocks", mocksRouter);
 app.use("/api/pets", petsRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/adoptions", adoptionsRouter);
 
 app.use(errorHandler);
 
