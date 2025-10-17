@@ -1,0 +1,389 @@
+openapi: 3.0.3
+info:
+  title: AdoptMe API
+  version: 1.0.0
+  description: REST API for managing pets, users and adoptions.
+
+tags:
+  - name: Users
+
+paths:
+  /api/users:
+    get:
+      summary: Get all users
+      tags: [Users]
+      responses:
+        "200":
+          description: Users found successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersListResponse"
+              examples:
+                success:
+                  value:
+                    status: success
+                    code: 200
+                    message: Users found successfully
+                    payload:
+                      - _id: 6521b5f0b7a2a5e2a1c3b567
+                        first_name: John
+                        last_name: Doe
+                        email: john.doe@example.com
+                        age: 28
+                        role: user
+                        pets: []
+                      - _id: 6521b5f0b7a2a5e2a1c3b568
+                        first_name: Jane
+                        last_name: Roe
+                        email: jane.roe@example.com
+                        age: 32
+                        role: admin
+                        pets:
+                          - 64f1b5f0b7a2a5e2a1c3b111
+    post:
+      summary: Create a new user
+      tags: [Users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+            examples:
+              example:
+                value:
+                  first_name: John
+                  last_name: Doe
+                  email: john.doe@example.com
+                  age: 28
+                  password: StrongP@ssw0rd
+                  role: user
+                  pets: []
+      responses:
+        "201":
+          description: User created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserCreatedResponse"
+              examples:
+                success:
+                  value:
+                    status: success
+                    code: 201
+                    message: User created successfully
+                    payload:
+                      _id: 6521b5f0b7a2a5e2a1c3b567
+                      first_name: John
+                      last_name: Doe
+                      email: john.doe@example.com
+                      age: 28
+                      role: user
+                      pets: []
+        "400":
+          description: Validation error.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "409":
+          description: Email already exists (unique constraint).
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+  /api/users/{uid}:
+    parameters:
+      - $ref: "#/components/parameters/UidParam"
+    get:
+      summary: Get a user by ID
+      tags: [Users]
+      responses:
+        "200":
+          description: User retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+              examples:
+                success:
+                  value:
+                    _id: 6521b5f0b7a2a5e2a1c3b567
+                    first_name: John
+                    last_name: Doe
+                    email: john.doe@example.com
+                    age: 28
+                    role: user
+                    pets: []
+        "400":
+          description: Invalid ObjectId.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "404":
+          description: User not found.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+    put:
+      summary: Update a user by ID
+      tags: [Users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+            examples:
+              example:
+                value:
+                  first_name: Johnny
+                  age: 29
+                  role: admin
+                  pets:
+                    - 64f1b5f0b7a2a5e2a1c3b111
+      responses:
+        "200":
+          description: User updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageUserResponse"
+              examples:
+                success:
+                  value:
+                    message: User updated successfully
+                    user:
+                      _id: 6521b5f0b7a2a5e2a1c3b567
+                      first_name: Johnny
+                      last_name: Doe
+                      email: john.doe@example.com
+                      age: 29
+                      role: admin
+                      pets:
+                        - 64f1b5f0b7a2a5e2a1c3b111
+        "400":
+          description: Invalid ObjectId or validation error.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "404":
+          description: User not found.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "409":
+          description: Email already exists (unique constraint).
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+    delete:
+      summary: Delete a user by ID
+      tags: [Users]
+      responses:
+        "200":
+          description: User deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageUserResponse"
+              examples:
+                success:
+                  value:
+                    message: User deleted successfully
+                    user:
+                      _id: 6521b5f0b7a2a5e2a1c3b567
+                      first_name: John
+                      last_name: Doe
+                      email: john.doe@example.com
+                      age: 28
+                      role: user
+                      pets: []
+        "400":
+          description: Invalid ObjectId.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "404":
+          description: User not found.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+components:
+  parameters:
+    UidParam:
+      name: uid
+      in: path
+      required: true
+      description: User ID (MongoDB ObjectId)
+      schema:
+        type: string
+        pattern: "^[a-fA-F0-9]{24}$"
+        example: 6521b5f0b7a2a5e2a1c3b567
+
+  schemas:
+    ObjectId:
+      type: string
+      description: MongoDB ObjectId
+      pattern: "^[a-fA-F0-9]{24}$"
+      example: 6521b5f0b7a2a5e2a1c3b567
+
+    PetId:
+      allOf:
+        - $ref: "#/components/schemas/ObjectId"
+      description: Reference to a Pet document (_id from "pets" collection)
+
+    User:
+      type: object
+      required:
+        - _id
+        - first_name
+        - last_name
+        - email
+        - age
+        - role
+        - pets
+      properties:
+        _id:
+          $ref: "#/components/schemas/ObjectId"
+        first_name:
+          type: string
+          example: John
+        last_name:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        age:
+          type: integer
+          example: 28
+        password:
+          type: string
+          writeOnly: true
+          description: |
+            Hashed password is typically stored in DB. The API may accept plaintext on create/update
+            depending on your service layer. This router returns it only if your model serialization allows it.
+        role:
+          type: string
+          enum: [user, admin]
+          default: user
+        pets:
+          type: array
+          items:
+            $ref: "#/components/schemas/PetId"
+          example: []
+
+    UserCreate:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - email
+        - age
+        - password
+      properties:
+        first_name:
+          type: string
+          example: John
+        last_name:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        age:
+          type: integer
+          example: 28
+        password:
+          type: string
+          example: StrongP@ssw0rd
+        role:
+          type: string
+          enum: [user, admin]
+          default: user
+        pets:
+          type: array
+          items:
+            $ref: "#/components/schemas/PetId"
+          default: []
+
+    UserUpdate:
+      type: object
+      description: Fields to update; all properties are optional.
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        age:
+          type: integer
+        password:
+          type: string
+        role:
+          type: string
+          enum: [user, admin]
+        pets:
+          type: array
+          items:
+            $ref: "#/components/schemas/PetId"
+
+    UsersListResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Users found successfully
+        payload:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+
+    UserCreatedResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        code:
+          type: integer
+          example: 201
+        message:
+          type: string
+          example: User created successfully
+        payload:
+          $ref: "#/components/schemas/User"
+
+    MessageUserResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: User updated successfully
+        user:
+          $ref: "#/components/schemas/User"
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: Invalid ObjectId

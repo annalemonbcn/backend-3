@@ -8,7 +8,12 @@ const router = Router();
 
 router.get("/", async (req, res) => {
   const users = await UserModel.find();
-  res.status(200).json(users);
+  res.status(200).json({
+    status: "success",
+    code: 200,
+    message: "Users found successfully",
+    payload: users,
+  });
 });
 
 router.get("/:uid", async (req, res) => {
@@ -56,7 +61,21 @@ router.post("/", async (req, res) => {
   const userData = req.body;
 
   const user = await UserModel.create(userData);
-  res.status(201).json({ message: "User created successfully", user });
+  res.status(201).json({
+    status: "success",
+    code: 201,
+    message: "User created successfully",
+    payload: user,
+  });
+});
+
+router.post("/batch", async (req, res) => {
+  const users = req.body;
+
+  const result = await UserModel.insertMany(users);
+  res
+    .status(201)
+    .json({ message: "Users created successfully", users: result });
 });
 
 export default router;
